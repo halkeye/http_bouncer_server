@@ -4,12 +4,20 @@
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
-var redis = require('redis');
 var bodyParser = require('body-parser');
 
 var io = require('socket.io')(server);
 var port = process.env.PORT || 3000;
-var client = redis.createClient();
+var redis;
+
+if (process.env.REDISTOGO_URL) {
+  var rtg  = require("url").parse(process.env.REDISTOGO_URL);
+  redis = require("redis").createClient(rtg.port, rtg.hostname);
+  redis.auth(rtg.auth.split(":")[1]);
+  // TODO: redistogo connection
+} else {
+  redis = require("redis").createClient();
+}
 
 server.listen(port, function () {
   console.log('Server listening at port %d', port);
@@ -45,7 +53,7 @@ app.post(/\/handler\/(.*)/, function(req,res) {
 
   };
   console.log("Pushing to", req.params[0], JSON.stringify(data));
-  client.rpush(req.params[0], JSON.stringify(data), function(err, reply) {
+  redis.rpush(req.params[0], JSON.stringify(data), function(err, reply) {
     console.log("rpush", {err: err, reply: reply});
   });
   res.send("OK");
@@ -60,7 +68,7 @@ io.on('connection', function (socket) {
   socket.on('listen_channel', function(channel) {
     console.log("[" + socket.id + "] Listening for channel: " + channel);
     socket.listen_channels[channel] = function() {
-      client.blpop(channel, 60, function(err, reply) {
+      redis.blpop(channel, 60, function(err, reply) {
         console.log("err", err);
         console.log("reply", reply);
         socket.emit('channel_data', channel, reply);
