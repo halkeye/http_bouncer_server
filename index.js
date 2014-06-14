@@ -39,14 +39,14 @@ app.use (function(req, res, next) {
   req.on('end', function() { req.body = data; next(); });
 });
 
-app.all(/\/handler\/(.*)/, function(req,res) {
+app.all(/\/handler\/([^\/]*)(\/?.*)/, function(req,res) {
   var channel = req.params[0];
   var data = {
     method: req.method,
     version: req.httpVersion,
     ip: req.ip,
     ips: req.ips,
-    path: channel,
+    path: req.params[1],
     host: req.host,
     query: req.query,
     body: req.body,
