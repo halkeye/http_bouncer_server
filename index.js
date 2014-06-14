@@ -1,94 +1,102 @@
-#!/usr/bin/env nodejs
-
 // Setup basic express server
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
-var bodyParser = require('body-parser');
+var _ = require('underscore');
+var util = require('util');
 
 var io = require('socket.io')(server);
 var port = process.env.PORT || 3000;
-var redis;
+var channels = {};
 
-if (process.env.REDISTOGO_URL) {
-  var rtg  = require("url").parse(process.env.REDISTOGO_URL);
-  redis = require("redis").createClient(rtg.port, rtg.hostname);
-  redis.auth(rtg.auth.split(":")[1]);
-  // TODO: redistogo connection
-} else {
-  redis = require("redis").createClient();
-}
+/*
+var redis = {};
+['default', 'blocked'].forEach(function(val) {
+  var r = null;
+  if (process.env.REDISTOGO_URL) {
+    var rtg  = require("url").parse(process.env.REDISTOGO_URL);
+    r = require("redis").createClient(rtg.port, rtg.hostname);
+    r.auth(rtg.auth.split(":")[1]);
+  } else {
+    r = require("redis").createClient();
+  }
+
+  redis[val] = r;
+});
+*/
 
 server.listen(port, function () {
   console.log('Server listening at port %d', port);
 });
+
 // Routing
 app.use(express.static(__dirname + '/public'));
+
 app.use (function(req, res, next) {
   var data='';
   req.setEncoding('utf8');
-  req.on('data', function(chunk) { 
-    data += chunk;
-  });
-
-  req.on('end', function() {
-    req.body = data;
-    next();
-  });
+  req.on('data', function(chunk) { data += chunk; });
+  req.on('end', function() { req.body = data; next(); });
 });
 
-// Body Parser
-//app.use(bodyParser.urlencoded());
-//app.use(bodyParser.json());
-
-app.post(/\/handler\/(.*)/, function(req,res) {
+app.all(/\/handler\/(.*)/, function(req,res) {
+  var channel = req.params[0];
   var data = {
+    method: req.method,
+    version: req.httpVersion,
     ip: req.ip,
     ips: req.ips,
-    path: req.path,
+    path: channel,
     host: req.host,
     query: req.query,
     body: req.body,
     headers: req.headers
 
   };
-  console.log("Pushing to", req.params[0], JSON.stringify(data));
-  redis.rpush(req.params[0], JSON.stringify(data), function(err, reply) {
-    console.log("rpush", {err: err, reply: reply});
-  });
-  res.send("OK");
+  console.log('Pushing to [', channel, JSON.stringify(data));
+  if (channels[channel]) {
+    channels[channel].forEach(function(socket) {
+      socket.emit('channel_data', channel, JSON.stringify(data));
+    });
+    res.send('OK');
+  } else {
+    res.send('NOLISTENERS');
+  }
 });
 
 io.on('connection', function (socket) {
-  socket.listen_channels = {};
+  (function() {
+    var old_emit = socket.emit;
+    socket.emit = function() {
+      console.log(util.format( '[%s] Socket.emit: %s', this.id, util.inspect(arguments)));
+      old_emit.apply(this, arguments);
+    };
+  })();
+
+
+  socket.channels = [];
   console.log('new user:', socket.id);
 
   socket.emit('request_channels');
 
   socket.on('listen_channel', function(channel) {
-    console.log("[" + socket.id + "] Listening for channel: " + channel);
-    socket.listen_channels[channel] = function() {
-      redis.blpop(channel, 60, function(err, reply) {
-        console.log("err", err);
-        console.log("reply", reply);
-        socket.emit('channel_data', channel, reply);
+    console.log('[' + socket.id + '] Listening for channel: ' + channel);
+    socket.channels = _.uniq(socket.channels.concat(channel));
 
-        /* Is it still listening? */
-        if (socket && socket.listen_channels && socket.listen_channels[channel]) 
-        {
-          process.nextTick(socket.listen_channels[channel]);
-        }
-      });
-    };
-    socket.listen_channels[channel]();
+    if (!channels[channel]) { channels[channel] = []; }
+    channels[channel].push(socket);
+    channels[channel] = _.uniq(channels[channel]);
   });
 
-  socket.on('new message', function(data) {
-    console.log('new message');
-  });
   socket.on('disconnect', function() {
-    delete socket.listen_channels;
+    socket.channels.forEach(function(channel) {
+      var position = channels[channel].indexOf(socket);
+      channels[channel].splice(position,1);
 
+      if (channels[channel].length === 0) {
+        delete channels[channel];
+      }
+    });
     console.log('disconnect');
   });
 });
