@@ -53,10 +53,9 @@ app.all(/\/handler\/([^\/]*)(\/?.*)/, function(req,res) {
     headers: req.headers
 
   };
-  console.log('Pushing to [', channel, JSON.stringify(data));
   if (channels[channel]) {
     channels[channel].forEach(function(socket) {
-      socket.emit('channel_data', channel, JSON.stringify(data));
+      socket.emit('channel_data', channel, data);
     });
     res.send('OK');
   } else {
