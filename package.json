@@ -1,17 +1,24 @@
 {
   "name": "http_bouncer_server",
-  "version": "0.0.0",
-  "description": "Public service that 'rebroadcasts' http hits to a client",
+  "version": "0.0.1",
+  "description": "Public service that 'rebroadcasts' http hits to any clients listening",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
+  "bugs": {
+    "url": "https://github.com/halkeye/http_bouncer_server/issues",
+    "emails": "http_bouncer_server@kodekoan.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/halkeye/http_bouncer_server"
+  },
   "author": "Gavin Mogan <gavin@kodekoan.com> (http://www.halkeye.net/)",
-  "license": "BSD",
+  "license": "MIT",
   "dependencies": {
     "express": "~4.4.3",
     "socket.io": "~1.0.4",
-    "body-parser": "~1.3.1",
     "underscore": "~1.6.0"
   }
 }
