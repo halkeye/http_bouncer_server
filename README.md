@@ -1,8 +1,8 @@
-[![Stories in Ready](https://badge.waffle.io/halkeye/http_bouncer_server.png?label=ready&title=Ready)](https://waffle.io/halkeye/http_bouncer_server)
 # http_bouncer_server
 
 [![Build Status](https://travis-ci.org/halkeye/http_bouncer_server.png?branch=master)](https://travis-ci.org/halkeye/http_bouncer_server)
 [![Dependency Status](https://gemnasium.com/halkeye/http_bouncer_server.png)](https://gemnasium.com/halkeye/http_bouncer_server)
+[![Stories in Ready](https://badge.waffle.io/halkeye/http_bouncer_server.png?label=ready&title=Ready)](https://waffle.io/halkeye/http_bouncer_server)
 
 Public service that 'rebroadcasts' http hits to any clients listening. (See: `http_bouncer_client`)
 
