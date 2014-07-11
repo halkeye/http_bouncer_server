@@ -1,6 +1,6 @@
 {
   "name": "http_bouncer_server",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Public service that 'rebroadcasts' http hits to any clients listening",
   "main": "index.js",
   "scripts": {
@@ -17,8 +17,8 @@
   "author": "Gavin Mogan <gavin@kodekoan.com> (http://www.halkeye.net/)",
   "license": "MIT",
   "dependencies": {
-    "express": "~4.4.3",
-    "socket.io": "~1.0.4",
+    "express": "~4.4.5",
+    "socket.io": "~1.0.6",
     "underscore": "~1.6.0"
   }
 }
