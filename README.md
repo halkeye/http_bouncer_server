@@ -5,6 +5,7 @@
 [![Stories in Ready](https://badge.waffle.io/halkeye/http_bouncer_server.png?label=ready&title=Ready)](https://waffle.io/halkeye/http_bouncer_server)
 
 Public service that 'rebroadcasts' http hits to any clients listening. (See: [http_bouncer_client](https://www.npmjs.org/package/http_bouncer_client))
+There is no queuing or anything. Its only going to broadcasts to any clients that are connected at that time.
 
 ## Getting Started
 
@@ -21,11 +22,39 @@ Public service that 'rebroadcasts' http hits to any clients listening. (See: [ht
 
 ## Using
 
-* Setup application to hit created server (see Getting Started)
-    * Format should be [server]/handler/[keyname]/[regular path]
-    * `curl -v  -d "{ \"asdadasd\" : \"good\" }" "http://localhost:5000/handler/gavin/this/is/my/url?blah=1" --header "Content-Type:application/json"`
-* Setup client to listen to handle (See: [http_bouncer_client](https://www.npmjs.org/package/http_bouncer_client))
-    * `http_bouncer_client -s http://localhost:5000/ -c 'gavin:http://localhost/dev_application?query_string_to_merge=1'`
+### Setup application to hit created server (see Getting Started)
+
+Format should be [server]/handler/[channelname]/[regular path]
+
+* *server* - The server running http_bouncer_server (see above)
+* *channelname* - Name of the channel. This is mostly used by the client to figure out where to redirect the given http path
+* *regular path* - Any additional url information to pass to the client
+
+## Example
+
+Setting the scene:
+
+* You have an external service (ex github) that submits webhooks to a specified public url.
+* One or more people want to develop with this data.
+* Your development environment is firewalled of (ex coffeeshop)
+
+### Sending out a sample hit
+
+This is just demonstrating how to test out. Normally your data would come from another source.
+Note the url, its sending data to the *channelname* of "gavin" and the *path* of "/handler/github?demo=1"
+
+`curl -d '{ "zen" : "981i34epoqwdu90ads", "hook_id": 12 }' "http://localhost:3000/handler/gavin/handler/github?demo=1" --header "Content-Type:application/json"`
+
+Note the "NOLISTENERS" response
+
+### Setup Client to listen
+
+We are going use the client to listen to the sample hit. We will talk to the server (-s) of `http://localhost:3000/` and map the channel `gavin` to `http://localhost/dev_application?query_string_to_merge=1`
+
+`http_bouncer_client -s http://localhost:3000/ -c 'gavin:http://localhost/dev_application?query_string_to_merge=1'`
+
+This will make every hit to the "gavin" channel and url of "handler/github?demo=1" to hit "http://localhost/dev_application/handler/github?demo=1&query_string_to_merge=1"
+See: [http_bouncer_client](https://www.npmjs.org/package/http_bouncer_client) for more info.
 
 ## Release History
 
