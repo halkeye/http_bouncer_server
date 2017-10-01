@@ -28,6 +28,7 @@
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
     "jest": "^20.0.4",
+    "nodemon": "^1.12.1",
     "prettier-eslint": "^8.0.0",
     "prettier-eslint-cli": "^4.3.2",
     "sinon": "^3.2.1"
