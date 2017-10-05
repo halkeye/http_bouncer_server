@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
+    "test": "jest",
     "lint": "eslint --ignore-path .gitignore ."
   },
   "repository": {
@@ -14,6 +15,9 @@
   },
   "engines": {
     "node": ">= 8"
+  },
+  "jest": {
+    "transform": {}
   },
   "author": "Gavin Mogan <github@gavinmogan.com> (http://www.gavinmogan.com/)",
   "license": "MIT",
@@ -29,14 +33,12 @@
     "eslint-plugin-standard": "^3.0.1",
     "jest": "^20.0.4",
     "nodemon": "^1.12.1",
-    "now": "^8.3.9",
     "prettier-eslint": "^8.0.0",
     "prettier-eslint-cli": "^4.3.2",
-    "sinon": "^3.2.1"
+    "supertest": "^3.0.0"
   },
   "dependencies": {
     "express": "~4.16.1",
-    "socket.io": "~2.0.3",
-    "underscore": "~1.8.3"
+    "socket.io": "~2.0.3"
   }
 }
