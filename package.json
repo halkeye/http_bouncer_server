@@ -22,7 +22,7 @@
   "author": "Gavin Mogan <github@gavinmogan.com> (http://www.gavinmogan.com/)",
   "license": "MIT",
   "devDependencies": {
-    "codacy-coverage": "^2.0.3",
+    "codacy-coverage": "^3.0.0",
     "conventional-changelog-cli": "^1.3.2",
     "conventional-github-releaser": "^2.0.0",
     "eslint": "^4.3.0",
