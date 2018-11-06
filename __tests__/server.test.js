@@ -3,38 +3,61 @@ const app = require('../lib/server.js');
 const req = require('supertest')(app);
 const io = require('socket.io-client');
 
-function sleep(ms) {
+function sleep (ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 describe('index', function () {
+  let client;
+  let mocks;
+  let server;
+  beforeAll(done => {
+    server = app.listen(0, done);
+  });
+  afterAll(done => {
+    server.close(done);
+  });
   beforeEach(async done => {
-    app.listen(0);
     // connect two io clients
-    this.io = io(`http://localhost:${app.address().port}/`);
-    this.onConnect = jest.fn();
-    this.io.on('connect', this.onConnect);
-    this.onEvent = jest.fn();
-    this.io.on('event', this.onEvent);
-    this.onDisconnect = jest.fn();
-    this.io.on('disconnect', this.onDisconnect);
-    // finish beforeEach setup
-    done();
+    client = io(`http://localhost:${server.address().port}/`);
+    mocks = {
+      onConnect: jest.fn(),
+      onDisconnect: jest.fn(),
+      onEvent: jest.fn()
+    };
+    client.on('error', console.log);
+    client.on('connect', done);
+    client.on('event', mocks.onEvent);
+    client.on('disconnect', mocks.onDisconnect);
   });
   afterEach(done => {
     // disconnect io clients after each test
-    this.io.disconnect();
-    app.close();
+    client.disconnect();
     done();
   });
 
-  it('hi', async () => {
-    this.io.emit('listen_channel', 'gavintest');
-    await sleep(10);
-    const res = await req.post('/handler/gavintest', {
-      hi: 'There'
+  it('NOLISTENERS', (done) => {
+    client.on('request_channels', async function () {
+      await sleep(10);
+      const res = await req.post('/handler/gavintest', {
+        hi: 'There'
+      });
+      expect(res.status).toEqual(200);
+      expect(res.text).toEqual('NOLISTENERS');
+      done();
     });
-    expect(res.status).toEqual(200);
-    expect(res.text).toEqual('NOLISTENERS');
+  });
+
+  it('A Listener', (done) => {
+    client.on('request_channels', async function () {
+      client.emit('listen_channel', 'gavintest');
+      await sleep(10);
+      const res = await req.post('/handler/gavintest', {
+        hi: 'There'
+      });
+      expect(res.status).toEqual(200);
+      expect(res.text).toEqual('OK');
+      done();
+    });
   });
 });

@@ -22,23 +22,23 @@
   "author": "Gavin Mogan <github@gavinmogan.com> (http://www.gavinmogan.com/)",
   "license": "MIT",
   "devDependencies": {
-    "codacy-coverage": "^3.0.0",
-    "conventional-changelog-cli": "^2.0.0",
-    "conventional-github-releaser": "^3.1.0",
-    "eslint": "^5.0.0",
+    "codacy-coverage": "^3.2.0",
+    "conventional-changelog-cli": "^2.0.11",
+    "conventional-github-releaser": "^3.1.2",
+    "eslint": "^5.8.0",
     "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^8.0.0",
-    "eslint-plugin-promise": "^4.0.0",
+    "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
-    "jest": "^22.0.0",
-    "nodemon": "^1.12.1",
-    "prettier-eslint": "^8.0.0",
-    "prettier-eslint-cli": "^4.3.2",
-    "supertest": "^3.0.0"
+    "jest": "^23.6.0",
+    "nodemon": "^1.18.6",
+    "prettier-eslint": "^8.8.2",
+    "prettier-eslint-cli": "^4.7.1",
+    "supertest": "^3.3.0"
   },
   "dependencies": {
-    "express": "~4.16.1",
-    "socket.io": "~2.1.0"
+    "express": "~4.16.4",
+    "socket.io": "~2.1.1"
   }
 }
