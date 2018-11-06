@@ -1,6 +1,6 @@
 # http_bouncer_server
 
-[![Build Status](https://travis-ci.org/halkeye/http_bouncer_server.png?branch=master)](https://travis-ci.org/halkeye/http_bouncer_server)
+[![Build Status](https://travis-ci.org/halkeye/http_bouncer_server.png?branch=master)](https://travis-ci.org/halkeye/http_bouncer_server) [![Greenkeeper badge](https://badges.greenkeeper.io/halkeye/http_bouncer_server.svg)](https://greenkeeper.io/)
 
 Public service that 'rebroadcasts' http hits to any clients listening. (See: [http_bouncer_client](https://www.npmjs.org/package/http_bouncer_client))
 There is no queuing or anything. Its only going to broadcasts to any clients that are connected at that time.
