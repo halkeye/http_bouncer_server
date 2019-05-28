@@ -1,6 +1,6 @@
 {
   "name": "http_bouncer_server",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Public service that 'rebroadcasts' http hits to any clients listening",
   "main": "index.js",
   "scripts": {
